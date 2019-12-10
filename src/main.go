@@ -26,25 +26,20 @@ func main() {
 
 	defer database.DB.Close()
 
-	err = keywords.Migrate(*database)
-	if err != nil {
-		log.Panicln(err)
-	}
-
 	err = users.Migrate(*database)
 	if err != nil {
 		log.Panicln(err)
 	}
 
-	// users
+	err = keywords.Migrate(*database)
+	if err != nil {
+		log.Panicln(err)
+	}
 
-	// uu := []users.User{}
-	// err = db.Select(&uu, "SELECT * FROM users")
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-	// log.Println("users...")
-	// log.Println(uu)
+	err = users.Seed(*database)
+	if err != nil {
+		log.Panicln(err)
+	}
 
 	gin.ForceConsoleColor()
 	r := setupRouter()
