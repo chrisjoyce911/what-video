@@ -20,8 +20,12 @@ func Migrate(myDB database.Manage) error {
 	sql := `
 	-- Create table keywords
 	CREATE TABLE IF NOT EXISTS keywords (
-		id SERIAL PRIMARY KEY,
-		name VARCHAR(50) NOT NULL
+		keyword_id INT PRIMARY KEY AUTO_INCREMENT,
+		user_id INT NOT NULL,
+		keyword VARCHAR(50) NOT NULL,
+		FOREIGN KEY (user_id)
+		REFERENCES users (user_id)
+		ON DELETE CASCADE
 	  );`
 
 	myDB.SqlInfo.Table = "keywords"
@@ -32,12 +36,12 @@ func Migrate(myDB database.Manage) error {
 		return err
 	}
 
-	myDB.SqlInfo.Sql = `ALTER TABLE keywords ADD owner INT NOT NULL;`
-	myDB.SqlInfo.Version = 2
-	err = myDB.Migrate()
-	if err != nil {
-		return err
-	}
+	// myDB.SqlInfo.Sql = `ALTER TABLE keywords ADD owner INT NOT NULL;`
+	// myDB.SqlInfo.Version = 2
+	// err = myDB.Migrate()
+	// if err != nil {
+	// 	return err
+	// }
 
 	return err
 }
