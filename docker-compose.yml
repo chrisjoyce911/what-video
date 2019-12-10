@@ -1,0 +1,40 @@
+version: "3.5"
+
+services:
+
+    # Database Service
+    mysql:
+        container_name: mysql
+        image: mysql:8.0.18
+        environment:
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+            # MYSQL_ROOT_PASSWORD: "password"
+            MYSQL_DATABASE: whatvideo
+        ports:
+            - "3306:3306"
+    # App Service
+    app:
+        # container_name: video-what
+        build:
+            context: . # Use an image built from the specified dockerfile in the current directory.
+            dockerfile: Dockerfile
+        ports:
+             - "80:80"
+        restart: unless-stopped
+        depends_on:
+            - mysql
+        environment:
+            REDIS_URL: redis:6379
+
+    traefik:
+        container_name: traefik
+        image: traefik:v2.1
+        # Enables the web UI and tells Traefik to listen to docker
+        command: --api.insecure=true --providers.docker
+        depends_on:
+          - app
+        volumes:
+            # So that Traefik can listen to the Docker events
+            - /var/run/docker.sock:/var/run/docker.sock
+        ports:
+            - "8080:8080"
